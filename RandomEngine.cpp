@@ -56,7 +56,7 @@ bool checkWin(int color){
                 if(i>=3){
                     if((board(i,j)==color)&& (board(i-1,j-1)==color)&& (board(i-2,j-2)==color)&& (board(i-3,j-3)==color)) return true;
                 }
-                if(i<length-3){
+                if(i<height-3){
                    if((board(i,j)==color)&& (board(i+1,j-1)==color)&& (board(i+2,j-2)==color)&& (board(i+3,j-3)==color)) return true; 
                 }
             }
@@ -71,7 +71,7 @@ bool checkWin(int color){
 
 //to be called only after checkWin
 bool checkTie(){
-    while(int i=0;i<width;i++){
+    for(int i=0;i<width;i++){
         if(board(0,i)==0)return false;
     }
     return true;
@@ -193,7 +193,7 @@ void protocalLoop(){
                 cout << "game_result 1" << endl;
             }else if(checkWin(-1)){
                 cout << "game_result -1" << endl;
-            }else checkTie(){
+            }else if (checkTie()){
                 cout << "game_result tie" << endl;
             }else if(makeMove(color,column)){
                 cout << "ready" << endl;
