@@ -47,6 +47,35 @@ vector<string> split(const string& str, const string& delim)
     return tokens;
 }
 
+//checkWin
+bool checkWin(int color){
+    for(int i = 0;i < height;i++){
+        for(int j = 0;j<width;j++){
+            if(j>=3){
+                if((board(i,j)==color)&& (board(i,j-1)==color)&& (board(i,j-2)==color)&& (board(i,j-3)==color)) return true;
+                if(i>=3){
+                    if((board(i,j)==color)&& (board(i-1,j-1)==color)&& (board(i-2,j-2)==color)&& (board(i-3,j-3)==color)) return true;
+                }
+                if(i<length-3){
+                   if((board(i,j)==color)&& (board(i+1,j-1)==color)&& (board(i+2,j-2)==color)&& (board(i+3,j-3)==color)) return true; 
+                }
+            }
+            if(i>=3){
+                if((board(i,j)==color)&& (board(i-1,j)==color)&& (board(i-2,j)==color)&& (board(i-3,j)==color)) return true;
+                
+            }
+        }
+    }
+    return false;
+}
+
+//to be called only after checkWin
+bool checkTie(){
+    while(int i=0;i<width;i++){
+        if(board(0,i)==0)return false;
+    }
+    return true;
+}
 
 void initialHandshake(){
     string line;
@@ -77,7 +106,7 @@ void init(){
 //only call this function if game is not already over
 bool makeMove(int color,int column){
     if((column >= width) || (column < 0)) return false;
-    for(int i = 0; i < height;i++){
+    for(int i = height; i >= 0;i++){
         if(board(i,column) == 0){
             board(i,column,color);
             return true;
@@ -159,7 +188,14 @@ void protocalLoop(){
             int color = stoi(tokens.at(1));
             int column = stoi(tokens.at(2));
             
-            if(makeMove(color,column)){
+            //make sure game is not over
+            if(checkWin(1)){
+                cout << "game_result 1" << endl;
+            }else if(checkWin(-1)){
+                cout << "game_result -1" << endl;
+            }else checkTie(){
+                cout << "game_result tie" << endl;
+            }else if(makeMove(color,column)){
                 cout << "ready" << endl;
             }else{
                 cout << "illegal_move" << endl;
