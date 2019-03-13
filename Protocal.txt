@@ -1,0 +1,59 @@
+Connect4 protocal:
+The following protocal is used for connect4 engines to communicate a gui via standard output.
+List of GUI commands:
+C4P_begin
+boardsize M N
+clear
+set color N
+get color time
+kill
+
+List of engine commands:
+ready
+not_supported
+<N>
+illegal_move
+game_result tie/-1/1
+shutting_down
+
+This simple interface can allow the 2 to communicate a game of any board size as follows: 
+The first command is always C4P_begin, to which the engine responds ready. The engine responds with ready after every successful process of a command, except for the get command. The default board size is the standard 7x6, although a new size can be set using  the boardsize command. Note that changing the board size also cleans the board. To clear the board without changing the size, use the clean board method. If a board size is not supported by the engine, it says not_supported and does not clear the board. To get a move from the engine, use the get command and specify a color (-1 or 1) and a time in milliseconds. This is the one time that instead of responding with ready after a successful command, it responds with <number> which is the column in which to make the move. For the gui to make a move, it uses the set command, to which the engine responds ready. To continue with a game already in middle, the engine can continually use the set command to get the engine up to speed with the game.
+Important note: the engine will assume all positions given to it can actually arise from legal play, and that the moves were made in the same order as given to it. Breaking this contract can cause the engine to play sub-optimally. player 1 is always assumed by the engine to be the first player, and GUI must follow this convention.
+Example uses of protocal, where > is gui and < engine
+>C4P_begin
+<ready
+>boardsize 10 10
+<not_supported
+>boardsize 8x6
+<ready
+>get 1 1000
+<4
+>set -1 5
+<ready
+>get 1 1000
+<3
+>set -1 2
+<ready
+>kill
+<shutting_down
+
+precise GUI command description:
+C4P_begin     - first command sent to init protocal. engine must respond "ready"
+boardsize M N -sets the engines internal boardsize to the specified M=width N=height, and clears the board. If the board sized is not supported, the board does no clear. Engine responds either "ready" or "not supported"
+clear - clears the engines board. Engine must respond "ready"
+set color N -tells the engine to make a move in column N for color N on its internal board. Columns are indexed at 0 through n-1. The engine responds "ready" if the move is made, "illegal_move" if the column is full or doesn't exsist, or "game_result <result>" if the game is already over, with <result> being either "tie" "1" or "-1". Possible values for color are 1 for the player who went first in the game and -1 for the other player. GUI must follow this convention.
+get color time - tells the engine to make a move on its internal board for the specified color at the specified time, and report it back. The engine either responds with <N>, with N being the column to make the move in, or with "game_result <result>" if the game is already over.
+kill - terminate the engine. The engine must respond with "shutting_down"
+
+precise engine command description:
+ready-after every successfull command except get and kill.
+not_supported - if a board size was asked for that isn't supported. The board is not cleared in this case
+<N> - response to get command. This is the column in which the engine made its move
+illegal_move - the move suggested by set was illegal and could not be made.
+game_result tie/1/-1 - if the game on the board is already over, this response is given to both the set command and get command. tie indicates a tie, 1 means player 1 won, and -1 means player -1 won.
+shutting_down - response to the kill command. The engine must shut down immediately after getting this command. Also, if any command received is badly fomed, engine reponds with shuttind_down
+
+
+
+
+
