@@ -22,6 +22,7 @@ int board(int h,int w){
 }
 
 void board(int h,int w,int data){
+
     boardData[h*height+w]= data;
 }
 
@@ -48,7 +49,8 @@ vector<string> split(const string& str, const string& delim)
 }
 
 //checkWin
-bool checkWin(int color){
+bool checkWin(int color){   
+
     for(int i = 0;i < height;i++){
         for(int j = 0;j<width;j++){
             if(j>=3){
@@ -61,8 +63,7 @@ bool checkWin(int color){
                 }
             }
             if(i>=3){
-                if((board(i,j)==color)&& (board(i-1,j)==color)&& (board(i-2,j)==color)&& (board(i-3,j)==color)) return true;
-                
+                if((board(i,j)==color)&& (board(i-1,j)==color)&& (board(i-2,j)==color)&& (board(i-3,j)==color)) return true;                
             }
         }
     }
@@ -101,12 +102,13 @@ void clear(){
 
 void init(){
     boardData = new int[height*width];
+    clear();
 }
 
 //only call this function if game is not already over
 bool makeMove(int color,int column){
     if((column >= width) || (column < 0)) return false;
-    for(int i = height; i >= 0;i++){
+    for(int i = height-1; i >= 0;i--){
         if(board(i,column) == 0){
             board(i,column,color);
             return true;
@@ -218,13 +220,32 @@ void protocalLoop(){
             int moveCol = getMove(color,time);
             cout << "<"<< moveCol << ">"<<endl;
 
-        }           
+        }  
+
+        if(strncmp(line.c_str(), "print", 5)==0){
+            for(int i = 0;i<height;i++){
+                cout <<"|";
+                for(int j = 0;j<width;j++){
+                    string s = " ";
+                    if(board(i,j)==1) s="X";
+                    if(board(i,j)==-1) s="O";
+
+                    cout <<s;
+                }
+                cout <<"|"<< endl;
+            }
+
+        }  
+
+
+        
     }while(true);
 }
 
 int main() 
 {
     cout << "CONNECT-4 CMD PROMPT:\n";
+    init();
     //set things up with GUI
     initialHandshake();
     protocalLoop();
