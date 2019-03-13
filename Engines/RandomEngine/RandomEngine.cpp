@@ -134,6 +134,7 @@ bool setBoardSize(int w,int h){
     if(w<4 || h<4) return false;
     width = w;
     height = h;
+    free(boardData);
     boardData = new int[height*width];
     clear();
     return true;
